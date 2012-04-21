@@ -1,0 +1,51 @@
+@import "compass/css3/box";
+$theme-color: gray;
+
+#easyuploader {
+  color: $theme-color;
+  font-size: 14pt;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 10px;
+  background-color: lighten($theme-color, 40%);
+  border: 5px dashed lighten($theme-color, 25%);
+
+  .file-row {
+    @include display-box;
+    @include box-orient(horizontal);
+    @include box-pack(center);
+  }
+
+  .file {
+    margin: 20px;
+    width: 100px;
+
+    .empty {
+      background: url("<%= image_path 'easyuploader/empty.png' %>") no-repeat left top;
+      width: 44px;
+      height: 56px;
+      margin-left: 28px;
+    }
+
+    .filled {
+      background: url("<%= image_path 'easyuploader/filled.png' %>") no-repeat left top;
+      width: 0;
+      height: 56px;
+    }
+
+    p {
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &.finished p { color: black; }
+    &.error p { color: #900; }
+
+    p.message {
+      font-size: 10pt;
+      font-style: italic;
+      font-weight: normal;
+    }
+  }
+}

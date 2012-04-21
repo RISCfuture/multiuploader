@@ -1,0 +1,74 @@
+root = exports ? this
+
+# A basic implementation of the {MultiUploader} class. Use this class in
+# conjunction with the "easyuploader" assets in `vendor/assets` for a
+# quick-and-dirty file uploader.
+#
+# Use the `$(...).easyUploader(...)` method for a more jQuery-like syntax.
+#
+# In order to take advantage of the included quick-'n'-ugly theme, your target
+# div needs to have an ID of `#easyuploader`.
+#
+class EasyUploader
+
+  # Creates a new upload manager.
+  #
+  # @param [jQuery element array] element The element to render the uploader in.
+  # @param [String] url The URL endpoint to post files to.
+  # @param [String] name The name of the file field.
+  # @param [Object] options Additional options to pass to {MultiUploader}.
+  #
+  constructor: (element, url, name, options) ->
+    options = $.extend({}, options,
+      startHandler: (uid, file) =>
+        if !@currentRow || @currentRow.find('>div.file').length == 5
+          @currentRow = $('<div/>').addClass('file-row').appendTo(element)
+
+        # preload images
+        (new Image()).src = "<%= image_path('easyuploader/empty.png') %>"
+        (new Image()).src = "<%= image_path('easyuploader/filled.png') %>"
+
+        fileDiv = $('<div/>').addClass('file').attr('id', "file_#{uid}").appendTo(@currentRow)
+        empty = $('<div/>').addClass('empty').appendTo(fileDiv)
+        $('<div/>').addClass('filled').appendTo empty
+        filename = $('<p/>').text(file.fileName).appendTo(fileDiv)
+      progressHandler: (uid, phase, position, total) =>
+        if (phase == 'upload')
+          amount = Math.round((position/total)*44)
+          $("#file_#{uid} .filled").css 'width', "#{amount}px"
+      loadHandler: (uid, xhr) =>
+        if Math.round(xhr.status/100) == 2
+           $("#file_#{uid}").addClass 'finished'
+        else
+          $("#file_#{uid}").addClass 'error'
+          if (xhr.status == 422)
+            errors = JSON.parse(xhr.responseText)
+            errorList = []
+
+            for fieldErrors in errors
+              do (fieldErrors) -> errorList = errorList.concat(fieldErrors)
+            $('<p/>').addClass('message').text(errorList.join(', ')).appendTo $("#file_#{uid}")
+          else
+            $('<p/>').addClass('message').text(xhr.statusText).appendTo $("#file_#{uid}")
+
+        if uploader.isFinished() && !uploader.isFailed() then window.location.reload()
+      errorHandler: (uid, xhr) =>
+        $("#file_#{uid}").addClass 'error'
+        if uploader.isFinished() && !uploader.isFailed() then window.location.reload()
+
+    )
+    uploader = element.multiUploader url, name, options
+    element.text "Drag files here to upload"
+
+
+$.fn.extend
+
+  # Creates an EasyUploader in the target element.
+  #
+  # @param [String] url The URL endpoint to post files to.
+  # @param [String] name The name of the file field.
+  # @param [Object] options Additional options to pass to {MultiUploader}.
+  # @return [EasyUploader] The new upload manager.
+  #
+  easyUploader: (url, name, options={}) ->
+    new EasyUploader(this, url, name, options)
