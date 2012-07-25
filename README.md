@@ -66,7 +66,6 @@ your `application.css` file (or some other CSS manifest file);
 
  ```` css
  /*
-  *= require multiuploader
   *= require easyuploader
   */
 ````
