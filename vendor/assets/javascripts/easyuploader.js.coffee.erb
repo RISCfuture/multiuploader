@@ -42,11 +42,13 @@ class EasyUploader
         else
           $("#file_#{uid}").addClass 'error'
           if (xhr.status == 422)
-            errors = JSON.parse(xhr.responseText)
+            errors = JSON.parse(xhr.responseText).errors
             errorList = []
 
-            for fieldErrors in errors
-              do (fieldErrors) -> errorList = errorList.concat(fieldErrors)
+            for own _, fieldErrors of errors
+              do (fieldErrors) ->
+                for fieldError in fieldErrors
+                  do (fieldError) -> errorList = errorList.concat(fieldError)
             $('<p/>').addClass('message').text(errorList.join(', ')).appendTo $("#file_#{uid}")
           else
             $('<p/>').addClass('message').text(xhr.statusText).appendTo $("#file_#{uid}")
