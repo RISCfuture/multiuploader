@@ -7,7 +7,7 @@ that uses strictly modern standard Web technologies.
 |             |                                 |
 |:------------|:--------------------------------|
 | **Author**  | Tim Morgan                      |
-| **Version** | 1.0 (Apr 20, 2012)              |
+| **Version** | 1.0.1 (Nov 9, 2013)             |
 | **License** | Released under the MIT license. |
 
 About
