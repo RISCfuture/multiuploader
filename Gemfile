@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'rails'
-gem 'compass'
 gem 'jquery-rails'
 
 group :development do
